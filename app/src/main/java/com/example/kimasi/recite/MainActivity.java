@@ -56,7 +56,7 @@ public class MainActivity extends ActionBarActivity
     ImageButton up = null;
     ImageButton dow = null;
     private Toast mToast;
-    Integer i = 0;
+    Integer shujuku_i = 0;
 
     Integer sql=0;
 
@@ -77,8 +77,10 @@ public class MainActivity extends ActionBarActivity
     List<String> list11 = new ArrayList<String>();
     List<String> list22 = new ArrayList<String>();
 
-    SharedPreferences preferences;
-    SharedPreferences.Editor editor;
+    SharedPreferences shujukupreferences;
+    SharedPreferences.Editor shujukueditor;
+
+    public static XmlResourceParser xrp = null;//加载数据资源xml
 
     //数据库对象
     MyDatabaseHelper dbHelper = null;
@@ -95,11 +97,13 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        xrp = getResources().getXml(R.xml.youdao);//加载数据资源xml
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
+        // 启动抽屉
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,   //被处理显示隐藏的组件(被控制的抽屉)
                 (DrawerLayout) findViewById(R.id.drawer_layout));//drawer-layout是DrawerLayout组件控制抽屉
@@ -108,17 +112,21 @@ public class MainActivity extends ActionBarActivity
         dbHelper = MyDatabaseHelper.getInstance(this);
         mDb = dbHelper.getReadableDatabase();
 
-//
+        shujukupreferences=getSharedPreferences("shujuku",MODE_PRIVATE);
+        shujuku_i=shujukupreferences.getInt("shujuku",0);
+   //     SQLdaoru();//导入数据
+   /*       if(shujuku_i==0){  //只导入一次数据
 
-
-
-           if(sql==0){  //只导入一次数据
-               SQLdaoru();//导入数据
-               sql++;
+              shujuku_i=1;
+              shujukueditor.putInt("shujuku",shujuku_i);
+              shujukueditor.commit();
           }
-
-        //    SQLchaxun();
-//           dbHelper.deleteDatabase(this); //删除数据库,记得放后面,不然冲突
+        if(mDb.getVersion()!=1){
+            SQLdaoru();
+            mDb.setVersion(2);
+        }
+      //    dbHelper.deleteDatabase(this); //删除数据库,记得放后面,不然冲突
+        */
         System.out.println("===onCreate===");
     }
 
@@ -176,8 +184,8 @@ public class MainActivity extends ActionBarActivity
 
 
     private void SQLdaoru() {  //导入xml资源 ,注意不可重复执行,会重复导入
-
-        XmlResourceParser xrp = getResources().getXml(R.xml.youdao);//加载数据资源xml
+        System.out.println("导入数据库");
+         xrp = getResources().getXml(R.xml.youdao);//加载数据资源xml
 
         try {
             while (xrp.getEventType() != XmlResourceParser.END_DOCUMENT) {
@@ -222,7 +230,7 @@ public class MainActivity extends ActionBarActivity
         if (!list111.isEmpty()) {
 
         }
-        for (i = 0; i < list111.size(); i++) {
+        for (int i = 0; i < list111.size(); i++) {
             System.out.println("数据库 " + list000.get(i) + " 单词:" + list111.get(i) + "  翻译:" + list222.get(i) +
                     "  标记: " + list333.get(i));
         }

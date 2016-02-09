@@ -7,12 +7,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechSynthesizer;
+import com.iflytek.cloud.SpeechUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +88,7 @@ public class Fragment1 extends android.support.v4.app.Fragment implements View.O
     SQLiteDatabase sqldate;
 
     // TextToSpeech spe=null;//发音,不兼容安卓4.4
-    //  SpeechSynthesizer mTts; //讯飞语音模块,在线解析
+    SpeechSynthesizer mTts; //讯飞语音模块,在线解析
 
 
 
@@ -100,14 +108,38 @@ public class Fragment1 extends android.support.v4.app.Fragment implements View.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SpeechUtility.createUtility(getActivity(), SpeechConstant.APPID + "=56b0437d");//初始化id
+
+
+        mTts= SpeechSynthesizer.createSynthesizer(getActivity(), mTtsInitListener);//!!不设置监听可能会失败
+        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan"); //设置发音人
+        mTts.setParameter(SpeechConstant.SPEED, "50");//设置语速
+        mTts.setParameter(SpeechConstant.VOLUME, "80");//设置音量，范围 0~100
+        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD); //设置云端
+
         preferences=getActivity().getSharedPreferences("c",getActivity().MODE_PRIVATE);//保存在本地 (配制,少部分数据)
         i=preferences.getInt("c",0);
         editor=preferences.edit();
         SQLchaxun();
     }
+    private InitListener mTtsInitListener = new InitListener() {
+        @Override
+        public void onInit(int code) {
+            Log.d("类初始化失败", "InitListener init() code = " + code);
+            if (code != ErrorCode.SUCCESS) {
+                mToast.setText("初始化失败,错误码："+code);
+                mToast.show();
+            } else {
+                // 初始化成功，之后可以调用startSpeaking方法
+                // 注：有的开发者在onCreate方法中创建完合成对象之后马上就调用startSpeaking进行合成，
+                // 正确的做法是将onCreate中的startSpeaking调用移至这里
+            }
+        }
+    };
     private void SQLchawancheng0(){
-        Cursor cursor = MainActivity.mDb.query("dict",null,"k like ?",new String[]{"1"},null,null,null);
-        while (cursor.moveToNext()) {
+        Cursor cursor = MainActivity.mDb.rawQuery( //0标记,未完成单词
+                "select * from dict where k= ? ",//<= _id and _id<= ?",// and k=?",//占位符查询
+                new String[]{"1"}); while (cursor.moveToNext()) {
             list12.add(cursor.getString(0));
             list13.add(cursor.getString(1));
             list14.add(cursor.getString(2));
@@ -121,8 +153,8 @@ public class Fragment1 extends android.support.v4.app.Fragment implements View.O
     }
     private void SQLchaxun() { //like :匹配符合的字母, %为通配符
         Cursor cursor = MainActivity.mDb.rawQuery( //0标记,未完成单词
-                "select * from dict where ? <= _id and _id<= ?",// and k=?",//占位符查询
-                new String[]{"0","120",});//查询key为int标记(区分已完成,和未完成)
+                "select * from dict where k= ? ",//<= _id and _id<= ?",// and k=?",//占位符查询
+                new String[]{"0"});//查询key为int标记(区分已完成,和未完成)//总数1771
         while (cursor.moveToNext()) {
             list000.add(cursor.getString(0));
             list1.add(cursor.getString(1));
@@ -261,7 +293,7 @@ public class Fragment1 extends android.support.v4.app.Fragment implements View.O
 
     public static void setDanci(){//设置显示单词
 
-        d1.setText(i.toString());//list1.get(i));
+        d1.setText(list1.get(i));
         d2.setText(list1.get(i + 1));
         d3.setText(list1.get(i + 2));
         d4.setText(list1.get(i + 3));
@@ -332,9 +364,10 @@ public class Fragment1 extends android.support.v4.app.Fragment implements View.O
         setFanyi();
     }
 
+
     public void pronounce(TextView k){
-/*
-        mTts.startSpeaking(k.getText().toString(), new SynthesizerListener() {
+
+        mTts.startSpeaking(k.getText().toString(), new com.iflytek.cloud.SynthesizerListener() {
             @Override
             public void onSpeakBegin() {//开始
 
@@ -369,7 +402,7 @@ public class Fragment1 extends android.support.v4.app.Fragment implements View.O
             public void onEvent(int i, int i2, int i3, Bundle bundle) {
 
             }
-        });  */
+        });
     }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
