@@ -1,11 +1,15 @@
 package com.example.kimasi.recite;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Fragment3 extends android.support.v4.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -19,6 +23,12 @@ public class Fragment3 extends android.support.v4.app.Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+
+    static List<String> list10 = new ArrayList<String>();
+    static List<String> list12 = new ArrayList<String>();
+    static List<String> list13 = new ArrayList<String>();
+    static List<String> list14 = new ArrayList<String>();
 
 
     // TODO: Rename and change types and number of parameters
@@ -45,6 +55,23 @@ public class Fragment3 extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main3, container, false);
+    }
+
+    private void SQLchawancheng0(){
+        Cursor cursor = MainActivity.mDb.rawQuery( //1标记,已完成单词
+                "select * from dict where k= ? ",//<= _id and _id<= ?",// and k=?",//占位符查询
+                new String[]{"1"}); while (cursor.moveToNext()) {
+            list10.add(cursor.getString(0));
+            list12.add(cursor.getString(1));
+            list13.add(cursor.getString(2));
+            list14.add(cursor.getString(3));
+        }
+/*
+        for (int jj=0;jj<list1.size();jj++)
+        {
+            System.out.println("主键 "+list12.get(jj)+" 单词:"+list13.get(jj)+"  翻译: "+list14.get(jj)+"  标号: "+list15.get(jj));
+        }
+*/
     }
 
     // TODO: Rename method, update argument and hook method into UI event

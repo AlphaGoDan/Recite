@@ -6,7 +6,6 @@
     android:background="#ff16384c"
     android:clickable="false"  >
 
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"

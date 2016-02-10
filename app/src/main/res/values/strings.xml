@@ -10,7 +10,10 @@
 
     <string name="action_example">Example action</string>
 
+    <string name="action_settings11">侧边栏菜单测试</string>
     <string name="action_settings">设置</string>
+    <string name="action_settings2">常亮</string>
+
     <string name="title_activity_dict">dictActivity</string>
 
     <string name="hello_world">Hello world!</string>
