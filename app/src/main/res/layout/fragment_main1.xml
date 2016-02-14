@@ -19,7 +19,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/la1">
 
                 <TextView
                     android:layout_width="130dp"
@@ -57,7 +58,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/la2">
 
                 <TextView
                     android:layout_width="130dp"
@@ -96,7 +98,8 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:id="@+id/la3">
 
                 <TextView
                     android:layout_width="130dp"
@@ -134,7 +137,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/la4">
 
                 <TextView
                     android:layout_width="130dp"
@@ -172,7 +176,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/la5">
 
                 <TextView
                     android:layout_width="130dp"
@@ -211,7 +216,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                >
+                android:id="@+id/la6">
 
                 <TextView
                     android:layout_width="130dp"

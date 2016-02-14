@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Large Text"
+        android:id="@+id/textView1"
+        android:textColor="#ffe1e0ff" />
+
+    <TextView
+        android:paddingBottom="6dp"
+        android:layout_width="wrap_content"
+        android:layout_height="61dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="   奋斗奋斗的风
+        电发电方式"
+        android:id="@+id/textView2"
+        android:textColor="#ffffedcb" />
+
+</LinearLayout>

@@ -7,20 +7,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
-import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.SpeechSynthesizer;
-import com.iflytek.cloud.SpeechUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +47,6 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
     static Integer finish=0;
 
-    Toast mToast;
 
     String k="0";
 
@@ -67,7 +59,6 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     static SharedPreferences.Editor editor;
 
     // TextToSpeech spe=null;//发音,不兼容安卓4.4
-    SpeechSynthesizer mTts; //讯飞语音模块,在线解析
 
     public static Fragment1 newInstance(int sectionNumber) {
         Fragment1 fragment = new Fragment1();
@@ -85,44 +76,24 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SpeechUtility.createUtility(getActivity(), SpeechConstant.APPID + "=56b0437d");//初始化id
-
-        mTts= SpeechSynthesizer.createSynthesizer(getActivity(), mTtsInitListener);//!!不设置监听可能会失败
-        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan"); //设置发音人
-        mTts.setParameter(SpeechConstant.SPEED, "50");           //设置语速
-        mTts.setParameter(SpeechConstant.VOLUME, "80");          //设置音量，范围 0~100
-        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD); //设置云端
 
         preferences=getActivity().getSharedPreferences("peizhi",getActivity().MODE_PRIVATE);//保存在本地 (配制,少部分数据)
         i=preferences.getInt("C",0);
+        finish=preferences.getInt("N",0);
 
         editor=preferences.edit();
 
         SQLchaxun();//获取数据库,标记0的单词
     }
-    private InitListener mTtsInitListener = new InitListener() {
-        @Override  //讯飞发音初始化监听
-        public void onInit(int code) {
-            Log.d("类初始化失败", "InitListener init() code = " + code);
-            if (code != ErrorCode.SUCCESS) {
-                mToast.setText("初始化失败,错误码："+code);
-                mToast.show();
-            } else {
-                // 初始化成功，之后可以调用startSpeaking方法
-                // 注：有的开发者在onCreate方法中创建完合成对象之后马上就调用startSpeaking进行合成，
-                // 正确的做法是将onCreate中的startSpeaking调用移至这里
-            }
-        }
-    };
 
     private void SQLchaxun() {                        //like :匹配符合的字母, %为通配符
         Cursor cursor = MainActivity.mDb.rawQuery(    //查询k为0标记,未完成单词
                 "select * from dict where k= ? ",     //<= _id and _id<= ?",// and k=?",//占位符查询
                 new String[]{"0"});                   //总数1771
         while (cursor.moveToNext()) {
+//            list0.add(cursor.getString(0));
             list1.add(cursor.getString(1));
             list2.add(cursor.getString(2));
-//            list0.add(cursor.getString(0));
 //            list3.add(cursor.getString(3));
         }
     }
@@ -167,9 +138,18 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         up.setOnClickListener(this);
         dow.setOnClickListener(this);
 
+        view.findViewById(R.id.la1).setOnClickListener(this);
+        view.findViewById(R.id.la2).setOnClickListener(this);
+        view.findViewById(R.id.la3).setOnClickListener(this);
+        view.findViewById(R.id.la4).setOnClickListener(this);
+        view.findViewById(R.id.la5).setOnClickListener(this);
+        view.findViewById(R.id.la6).setOnClickListener(this);
+
+
+
         setDanci();
         setFanyi();
-        finish=preferences.getInt("N",0);
+
         number.setText(finish.toString()+" 个单词");
         return view;
     }
@@ -229,7 +209,6 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         }
         setDanci();
         setFanyi();
-        setCC();
     }
 
     public static void UpDF(){//翻页,上
@@ -240,7 +219,6 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         }
         setDanci();
         setFanyi();
-        setCC();
     }
 
     public static void setCC(){//销毁时保存进度
@@ -315,7 +293,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     }
 
     public void pronounce(TextView k){//发音
-        mTts.startSpeaking(k.getText().toString(), new com.iflytek.cloud.SynthesizerListener() {
+        MainActivity.mTts.startSpeaking(k.getText().toString(), new com.iflytek.cloud.SynthesizerListener() {
             @Override
             public void onSpeakBegin() {//开始
             }
@@ -353,6 +331,10 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
+    public void onPause(){  ///进入后台提交持久性变化
+        super.onPause();
+        setCC();            //保存配制数据,翻页,和已完成数
+    }
     @Override
     public void onDetach() {
         super.onDetach();

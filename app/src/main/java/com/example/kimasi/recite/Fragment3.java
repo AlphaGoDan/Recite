@@ -26,9 +26,9 @@ public class Fragment3 extends android.support.v4.app.Fragment {
 
 
     static List<String> list10 = new ArrayList<String>();
+    static List<String> list11 = new ArrayList<String>();
     static List<String> list12 = new ArrayList<String>();
     static List<String> list13 = new ArrayList<String>();
-    static List<String> list14 = new ArrayList<String>();
 
 
     // TODO: Rename and change types and number of parameters
@@ -62,9 +62,9 @@ public class Fragment3 extends android.support.v4.app.Fragment {
                 "select * from dict where k= ? ",//<= _id and _id<= ?",// and k=?",//占位符查询
                 new String[]{"1"}); while (cursor.moveToNext()) {
             list10.add(cursor.getString(0));
-            list12.add(cursor.getString(1));
-            list13.add(cursor.getString(2));
-            list14.add(cursor.getString(3));
+            list11.add(cursor.getString(1));
+            list12.add(cursor.getString(2));
+            list13.add(cursor.getString(3));
         }
 /*
         for (int jj=0;jj<list1.size();jj++)

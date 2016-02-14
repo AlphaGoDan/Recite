@@ -1,23 +1,33 @@
 package com.example.kimasi.recite;
 
-import android.content.SharedPreferences;
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechSynthesizer;
+import com.iflytek.cloud.SpeechUtility;
 
 
 public class MainActivity extends ActionBarActivity
@@ -27,60 +37,14 @@ public class MainActivity extends ActionBarActivity
 
     private CharSequence mTitle;
 
-    TextView d1 = null;
-    TextView d2 = null;
-    TextView d3 = null;
-    TextView d4 = null;
-    TextView d5 = null;
-    TextView d6 = null;
-
-    TextView f1 = null;
-    TextView f2 = null;
-    TextView f3 = null;
-    TextView f4 = null;
-    TextView f5 = null;
-    TextView f6 = null;
-
-    TextView number = null;
-
-    ImageButton up = null;
-    ImageButton dow = null;
-    private Toast mToast;
-
-
-    Integer sql=0;
-
-    Integer finish = 0;
-
-
-
-    List<String> list1 = new ArrayList<String>();
-    List<String> list2 = new ArrayList<String>();
-
-    List<String> list000 = new ArrayList<String>();
-    List<String> list111 = new ArrayList<String>();
-    List<String> list222 = new ArrayList<String>();
-    List<String> list333 = new ArrayList<String>();
-
-    List<String> list11 = new ArrayList<String>();
-    List<String> list22 = new ArrayList<String>();
-
-    SharedPreferences shujukupreferences;
-    SharedPreferences.Editor shujukueditor;
-
     public static XmlResourceParser xrp = null;//加载数据资源xml
-    String danci = null;
-    String fanyi = null;
 
-    String k = "0";
-    Integer shujuku_i = 0;
+    static SpeechSynthesizer mTts; //讯飞语音模块,在线解析
+    Toast mToast;
+
     //数据库对象
     MyDatabaseHelper dbHelper = null;
     static SQLiteDatabase mDb = null;
-
-    int j = 0;
-    int h = 0;//确定数据的读取,不加标记xml解析时候会重复存入数据库
-
 
     Fragment p1=null;
 
@@ -89,6 +53,26 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SpeechUtility.createUtility(this, SpeechConstant.APPID + "=56b0437d");//初始化id
+
+        mTts= SpeechSynthesizer.createSynthesizer(this, mTtsInitListener);//!!不设置监听可能会失败
+        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan"); //设置发音人
+        mTts.setParameter(SpeechConstant.SPEED, "50");           //设置语速
+        mTts.setParameter(SpeechConstant.VOLUME, "80");          //设置音量，范围 0~100
+        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD); //设置云端
+
+        View view=findViewById(R.id.drawer_layout);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {  //系统版本,容错
+            setTranslucentStatus(true);
+
+
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintResource(R.color.statusbar_bg);//通知栏所需颜色
+        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
+ //       view.setPadding(0,150,0,0);//(0, config.getPixelInsetTop(true), 0, config.getPixelInsetBottom());
+        }
         xrp = getResources().getXml(R.xml.youdao);//加载数据资源xml
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -104,13 +88,38 @@ public class MainActivity extends ActionBarActivity
         dbHelper = MyDatabaseHelper.getInstance(this);//单例
         mDb = dbHelper.getReadableDatabase();//数据库   不存在 则创建  如果存在则打开
 
-        shujukupreferences=getSharedPreferences("shujuku",MODE_PRIVATE);
-        shujuku_i=shujukupreferences.getInt("shujuku",0);
 
     //  dbHelper.deleteDatabase(this); //删除数据库,记得放后面,不然冲突
 
    //     System.out.println("===onCreate===");
     }
+    @TargetApi(19)
+    private void setTranslucentStatus(boolean on) {
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        if (on) {
+            winParams.flags |= bits;
+        } else {
+            winParams.flags=bits; //&= ~bits;
+       }
+
+       win.setAttributes(winParams);//定义窗口属性
+    }
+    private InitListener mTtsInitListener = new InitListener() {
+        @Override  //讯飞发音初始化监听
+        public void onInit(int code) {
+            Log.d("类初始化失败", "InitListener init() code = " + code);
+            if (code != ErrorCode.SUCCESS) {
+                mToast.setText("初始化失败,错误码："+code);
+                mToast.show();
+            } else {
+                // 初始化成功，之后可以调用startSpeaking方法
+                // 注：有的开发者在onCreate方法中创建完合成对象之后马上就调用startSpeaking进行合成，
+                // 正确的做法是将onCreate中的startSpeaking调用移至这里
+            }
+        }
+    };
 
     protected void onStart(){
         super.onStart();
@@ -138,10 +147,22 @@ public class MainActivity extends ActionBarActivity
 
     protected void onDestroy(){
         super.onDestroy();
+        setScreenMode(1);
         mDb.close();
     //    System.out.println("===onDestroy===");
     }
 
+    /**
+     * 设置当前屏幕亮度的模式 SCREEN_BRIGHTNESS_MODE_AUTOMATIC=1 为自动调节屏幕亮度
+     * SCREEN_BRIGHTNESS_MODE_MANUAL=0 为手动调节屏幕亮度
+     */
+    private void setScreenMode(int paramInt) {
+        try {
+            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, paramInt);
+        } catch (Exception localException) {
+            localException.printStackTrace();
+        }
+    }
     public boolean onKeyUp(int keyCode,KeyEvent event){//加这个可以没有按键音
         getCurrentFocus();
         switch (keyCode){
@@ -169,13 +190,16 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {//根据position启动新碎片
         switch (position){
             case 0:
+        //       actionBar.setBackgroundDrawable(drawable);
                  p1 = Fragment1.newInstance(position);
                 break;
             case 1:
+
                  p1 = Fragment2.newInstance(position);
                 break;
             case 2:
-                 p1 = Fragment3.newInstance(position);
+            //    drawable=new ColorDrawable(R.color.bar3);
+                p1 = Fragment3.newInstance(position);
                 break;
         }
 
@@ -201,9 +225,15 @@ public class MainActivity extends ActionBarActivity
 
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();//应该是返回这个activity的ActionBar,,
+
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);  //显示bar的标题
+        Resources resources=getResources();
+    //    ColorDrawable drawable=new ColorDrawable(R.color.bar2);
+        Drawable drawable=resources.getDrawable(R.drawable.baraa);
+        actionBar.setBackgroundDrawable(drawable);
+
     }
 
     @Override
@@ -221,7 +251,9 @@ public class MainActivity extends ActionBarActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_example) {//设置
+            Intent intent=new Intent(this,setActivity.class);
+           startActivity(intent);
             return true;
         }
 

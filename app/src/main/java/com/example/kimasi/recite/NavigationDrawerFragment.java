@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -89,8 +88,9 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,//绘制界面时调用,返回listView
                              Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(//填充一个listView
-                R.layout.fragment_navigation_drawer, container, false);//为false应该是,指定作不为container的子视图,只是设置布局参数
+  /*      mDrawerListView = (ListView) inflater.inflate(//填充一个listView
+              //  R.layout.fragment_navigation_drawer,
+                container, false);//为false应该是,指定作不为container的子视图,只是设置布局参数
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -107,7 +107,30 @@ public class NavigationDrawerFragment extends Fragment {
                         getString(R.string.title_section3),
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);//设置列表项只能选择一个
+        mDrawerListView.setPadding(0,150,0,0);  //不然会被覆盖,(透明状态栏)
         return mDrawerListView; //返回列表作为这个碎片(抽屉)
+        */
+        View view=inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
+        mDrawerListView=(ListView)view.findViewById(R.id.na_dra_list);
+        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectItem(position);//根据点击启动碎片
+            }
+        });
+        mDrawerListView.setAdapter(new ArrayAdapter<String>( //设置列表的简单适配器
+                getActionBar().getThemedContext(),
+                android.R.layout.simple_list_item_activated_1,
+                android.R.id.text1,
+                new String[]{
+                        getString(R.string.title_section1),
+                        getString(R.string.title_section2),
+                        getString(R.string.title_section3),
+                }));
+        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);//设置列表项只能选择一个
+   //     mDrawerListView.setPadding(0,150,0,0);  //安卓4.4以上,不然会被覆盖,(透明状态栏)
+
+        return  view;
     }
 
     public boolean isDrawerOpen() {  //检查抽屉是否打开
@@ -247,8 +270,8 @@ public class NavigationDrawerFragment extends Fragment {
             return true;
         }
 
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == R.id.action_example) {  //菜单栏,设置,外显
+  //          Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
             return true;
         }
 
