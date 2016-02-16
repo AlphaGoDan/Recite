@@ -3,6 +3,7 @@ package com.example.kimasi.recite;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -88,29 +89,23 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,//绘制界面时调用,返回listView
                              Bundle savedInstanceState) {
-  /*      mDrawerListView = (ListView) inflater.inflate(//填充一个listView
-              //  R.layout.fragment_navigation_drawer,
-                container, false);//为false应该是,指定作不为container的子视图,只是设置布局参数
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        View view=inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
+        View fnd=view.findViewById(R.id.fnd_1);
+        View touxiang=view.findViewById(R.id.touxiang);
+        touxiang.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);//根据点击启动碎片
+            public void onClick(View v) {
+       //         Intent intent=new Intent(getActivity(),LoginActivity.class);
+      //          startActivity(intent);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>( //设置列表的简单适配器
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                }));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);//设置列表项只能选择一个
-        mDrawerListView.setPadding(0,150,0,0);  //不然会被覆盖,(透明状态栏)
-        return mDrawerListView; //返回列表作为这个碎片(抽屉)
-        */
-        View view=inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
+        fnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { //拦截这个侧边栏的监听使不会传递到下一层的Fragment;
+
+            }
+        });
         mDrawerListView=(ListView)view.findViewById(R.id.na_dra_list);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -128,8 +123,10 @@ public class NavigationDrawerFragment extends Fragment {
                         getString(R.string.title_section3),
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);//设置列表项只能选择一个
-   //     mDrawerListView.setPadding(0,150,0,0);  //安卓4.4以上,不然会被覆盖,(透明状态栏)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {  //系统版本,容错
+            view.setPadding(0, 150, 0, 0);  //安卓4.4以上,不然会被覆盖,(透明状态栏)
+        }
         return  view;
     }
 

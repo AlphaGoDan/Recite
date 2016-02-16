@@ -60,7 +60,7 @@ public class Fragment2 extends android.support.v4.app.Fragment {
     }
 
     private void SQLquanbu(){
-        Cursor cursor=MainActivity.mDb.rawQuery(
+        Cursor cursor= MainActivity.mDb.rawQuery(
                 "select * from dict where ? <= k",
                 new String[]{"0"});
         while (cursor.moveToNext()){
@@ -68,11 +68,8 @@ public class Fragment2 extends android.support.v4.app.Fragment {
             list21.add(cursor.getString(1));
             list22.add(cursor.getString(2));
             list23.add(cursor.getString(3));
-
         }
-        System.out.println("测试**总数= " + list21.size());
-
-
+//        System.out.println("测试**总数= " + list21.size());
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,11 +95,9 @@ public class Fragment2 extends android.support.v4.app.Fragment {
             public boolean onQueryTextChange(String newText) {
                 if (TextUtils.isEmpty(newText)){
                     listVie.clearTextFilter();
-
                 }
                 else{
                     listVie.setFilterText(newText);
-
                 }
                 return true;
             }
@@ -121,26 +116,24 @@ public class Fragment2 extends android.support.v4.app.Fragment {
 
         @Override
         public Object getItem(int position) {
-
             return position;
         }
 
         @Override
         public long getItemId(int position) {
-
             return position;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            View view= View.inflate(getActivity(),R.layout.list_item,null);
+            View view= View.inflate(getActivity(), R.layout.list_item,null);
             TextView textView1=(TextView)view.findViewById(R.id.textView1);
             TextView textView2=(TextView)view.findViewById(R.id.textView2);
             textView1.setText(listd1.get(position));
             textView2.setText(listd2.get(position));
             if(list23.get(position)=="1"){
-                view.setBackgroundColor(Color.parseColor("#FF7547"));//???
+                view.setBackgroundColor(Color.parseColor("#FF7547"));//???修改某个列表项的颜色
             }
             return view;
         }
@@ -149,8 +142,7 @@ public class Fragment2 extends android.support.v4.app.Fragment {
         public Filter getFilter(){
             if(null==myFilter){
                 myFilter=new MyFilter();
-                System.out.println("测试--getFilter");
-
+//                System.out.println("测试--getFilter");
             }
             return myFilter;
         }
@@ -173,8 +165,6 @@ public class Fragment2 extends android.support.v4.app.Fragment {
                     mapList.clear();
                     mapList.put("danci",list21);
                     mapList.put("fanyi",list22);
-
-
                 } else {
                     // 过滤出新数据
                     for(int i=0;i<list21.size();i++)
@@ -187,10 +177,9 @@ public class Fragment2 extends android.support.v4.app.Fragment {
                     mapList.put("danci",newValues1);
                     mapList.put("fanyi",newValues2);
                 }
-
                 results.values = mapList;    //???
                 results.count = newValues1.size();
-                return results;
+                return results;  //传出过滤好的数据
             }
 
             @Override
@@ -199,7 +188,7 @@ public class Fragment2 extends android.support.v4.app.Fragment {
 
                 HashMap<String,List> mapList2= (HashMap)results.values;
 
-                listd1 = mapList2.get("danci");
+                listd1 = mapList2.get("danci");//赋给适配器的数据
                 listd2 =mapList2.get("fanyi");
 
                 if (results.count > 0) {
@@ -229,6 +218,9 @@ public class Fragment2 extends android.support.v4.app.Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        list21.clear();
+        list22.clear();
+        list23.clear();
         mListener = null;
     }
 

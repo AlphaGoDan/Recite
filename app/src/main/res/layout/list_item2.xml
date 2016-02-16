@@ -3,29 +3,23 @@
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkBox"
-        android:checked="false" />
-
     <TextView
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Large Text"
-        android:id="@+id/textView1"
-        android:textColor="#ffe1e0ff"
-        android:layout_marginLeft="3dp" />
+        android:id="@+id/textView11"
+        android:textColor="#ffe1e0ff" />
 
     <TextView
         android:paddingBottom="6dp"
         android:layout_width="wrap_content"
-        android:layout_height="65dp"
+        android:layout_height="61dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="   奋斗奋斗的风
         电发电方式"
-        android:id="@+id/textView2"
-        android:textColor="#ffffc9ba" />
+        android:id="@+id/textView22"
+        android:textColor="#ffffc9ba"
+        android:autoText="false" />
 
 </LinearLayout>

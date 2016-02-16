@@ -9,7 +9,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:id="@+id/fnd_1">
 
         <LinearLayout
             android:orientation="vertical"
@@ -23,7 +24,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="1"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:id="@+id/touxiang">
+
 
                 <ImageView
 
@@ -44,7 +47,8 @@
                     android:text="李狗蛋"
                     android:id="@+id/textView4"
                     android:layout_marginTop="40dp"
-                    android:layout_marginLeft="40dp" />
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginBottom="10dp" />
 
             </RelativeLayout>
 

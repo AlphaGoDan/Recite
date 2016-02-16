@@ -47,7 +47,6 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
     static Integer finish=0;
 
-
     String k="0";
 
     static List<String> list0 = new ArrayList<String>();
@@ -75,7 +74,6 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         preferences=getActivity().getSharedPreferences("peizhi",getActivity().MODE_PRIVATE);//保存在本地 (配制,少部分数据)
         i=preferences.getInt("C",0);
@@ -137,16 +135,14 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
         up.setOnClickListener(this);
         dow.setOnClickListener(this);
-
+/*
         view.findViewById(R.id.la1).setOnClickListener(this);
         view.findViewById(R.id.la2).setOnClickListener(this);
         view.findViewById(R.id.la3).setOnClickListener(this);
         view.findViewById(R.id.la4).setOnClickListener(this);
         view.findViewById(R.id.la5).setOnClickListener(this);
         view.findViewById(R.id.la6).setOnClickListener(this);
-
-
-
+*/
         setDanci();
         setFanyi();
 
@@ -280,7 +276,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     public void achieve(int k){//移除已完成单词,移到已完成列表list11
         String s1=list1.get(k);
         ContentValues contentValues=new ContentValues();
-        contentValues.put("k",1);
+        contentValues.put("k","1");
         MainActivity.mDb.update("dict",contentValues," word = ?",new String[]{s1});
 
         list1.remove(k);
