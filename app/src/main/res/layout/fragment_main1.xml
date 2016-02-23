@@ -263,13 +263,15 @@
         android:baselineAligned="false">
 
         <ImageButton
-            android:src="@drawable/topmenu_icn_set"
+            android:src="@drawable/search_s"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageButton"
-            android:background="#ff111c48" />
+            android:layout_height="fill_parent"
+            android:id="@+id/searchButton"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#ff111831" />
 
         <ImageButton
             android:src="@drawable/up"

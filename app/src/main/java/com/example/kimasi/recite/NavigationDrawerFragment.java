@@ -1,6 +1,7 @@
 package com.example.kimasi.recite;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,13 +23,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends Fragment  {
 
     /**
      * Remember the position of the selected item.
@@ -54,9 +57,16 @@ public class NavigationDrawerFragment extends Fragment {
     private ListView mDrawerListView;
     private View mFragmentContainerView;
 
+    static TextView userNameView;
+
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;//
     private boolean mUserLearnedDrawer;
+
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    static String userName_N=" hhh";
+
 
     public NavigationDrawerFragment() {
     }
@@ -65,8 +75,6 @@ public class NavigationDrawerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Read in the flag indicating whether or not the user has demonstrated awareness of the
-        // drawer. See PREF_USER_LEARNED_DRAWER for details.
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);//应该是监听,抽屉是否打开
 
@@ -91,13 +99,27 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view=inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
+
+        userNameView=(TextView)view.findViewById(R.id.user_Name);
+        preferences=getActivity().getSharedPreferences("fpeizhi", getActivity().MODE_PRIVATE);//保存配制到本地
+        userName_N=preferences.getString("user_name","kao");//可以读取其他类保存的设置
+   //     userName_N=MainActivity.userName;
+        userNameView.setText(userName_N);
+    //    editor.putString("userName",userName_N);//试试看存在其他地方能不能获取
+        Log.v("碎片creaView","============================");
         View fnd=view.findViewById(R.id.fnd_1);
         View touxiang=view.findViewById(R.id.touxiang);
         touxiang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-       //         Intent intent=new Intent(getActivity(),LoginActivity.class);
-      //          startActivity(intent);
+                //进用户界面或注册
+                Intent intent;
+                if(!MainActivity.zhuce){
+                    intent=new Intent(getActivity(),LoginActivity.class);//登陆
+                }else {
+                     intent=new Intent(getActivity(),UserActivity.class);//资料
+                }
+                startActivity(intent);
             }
         });
         fnd.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +151,7 @@ public class NavigationDrawerFragment extends Fragment {
         }
         return  view;
     }
+
 
     public boolean isDrawerOpen() {  //检查抽屉是否打开
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);

@@ -2,6 +2,7 @@ package com.example.kimasi.recite;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +18,8 @@ import com.iflytek.cloud.SpeechError;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.bmob.v3.BmobUser;
 
 public class Fragment1 extends Fragment implements View.OnClickListener{
 
@@ -40,6 +43,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
     static TextView number=null;
 
+    ImageButton serach=null;
     ImageButton up=null;
     ImageButton dow=null;
 
@@ -47,7 +51,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
     static Integer finish=0;
 
-    String k="0";
+
 
     static List<String> list0 = new ArrayList<String>();
     static List<String> list1 = new ArrayList<String>();
@@ -117,6 +121,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
         number=(TextView)view.findViewById(R.id.number);
 
+        serach=(ImageButton)view.findViewById(R.id.searchButton);
         up=(ImageButton)view.findViewById(R.id.buttonUp);
         dow=(ImageButton)view.findViewById(R.id.buttonDow);
 
@@ -133,6 +138,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         view.findViewById(R.id.button5).setOnClickListener(this);
         view.findViewById(R.id.button6).setOnClickListener(this);
 
+        serach.setOnClickListener(this);
         up.setOnClickListener(this);
         dow.setOnClickListener(this);
 /*
@@ -145,6 +151,17 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 */
         setDanci();
         setFanyi();
+
+        BmobUser bmobUser = BmobUser.getCurrentUser(getActivity());
+        if(bmobUser != null){ //经测试可以获得用户
+            // 允许用户使用应用
+     //       number.setText("获得用户");
+        }else{
+            //缓存用户对象为空时， 可打开用户注册界面…
+     //       number.setText("+++++");
+
+        }
+
 
         number.setText(finish.toString()+" 个单词");
         return view;
@@ -187,6 +204,10 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
                 break;
             case R.id.d6:
                 pronounce(d6);
+                break;
+            case R.id.searchButton:
+                Intent intent=new Intent(getActivity(),SearchActivity.class);
+                startActivity(intent);
                 break;
             case R.id.buttonUp:
                 UpDF();

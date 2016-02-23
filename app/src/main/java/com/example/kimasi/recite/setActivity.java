@@ -13,6 +13,8 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
+import com.iflytek.cloud.SpeechConstant;
+
 
 public class setActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener{
 
@@ -102,7 +104,7 @@ public class setActivity extends ActionBarActivity implements SeekBar.OnSeekBarC
             break;
             case R.id.seekBar2:
                 MainActivity.fayin=new Integer(progress);
-     //           MainActivity.mTts.setParameter(SpeechConstant.VOLUME,MainActivity.fayin.toString() );//设置音量，范围 0~100
+                MainActivity.mTts.setParameter(SpeechConstant.VOLUME,MainActivity.fayin.toString() );//设置音量，范围 0~100
              //没有传递保存,本来就是Main的mTts ;
                 break;
         }

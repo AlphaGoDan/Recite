@@ -41,6 +41,8 @@ public class MainActivity extends ActionBarActivity
 
     static SpeechSynthesizer mTts; //讯飞语音模块,在线解析
     Toast mToast;
+    Toast mToast1;
+
 
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
@@ -55,26 +57,35 @@ public class MainActivity extends ActionBarActivity
 
     Fragment p1=null;
 
+    static Boolean zhuce=false; //确认当前已经登陆，
+    static String userName;
+    static String xinxi; //用户信息
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.v("主activity","============================");
+
+        preferences=getSharedPreferences("fpeizhi", MODE_PRIVATE);//保存配制到本地
+        liangduzhi=preferences.getInt("liangduzhi",150);
+        liangduMo=preferences.getInt("liangduMo",1);
+        fayin=preferences.getInt("fayin",80);
+        zhuce=preferences.getBoolean("zhuce",false);
+        userName=preferences.getString("user_name","点击登陆");
+        editor=preferences.edit();
 
         SpeechUtility.createUtility(this, SpeechConstant.APPID + "=56b0437d");//初始化id
 
         mTts= SpeechSynthesizer.createSynthesizer(this, mTtsInitListener);//!!不设置监听可能会失败
         mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan"); //设置发音人
         mTts.setParameter(SpeechConstant.SPEED, "50");           //设置语速
-        mTts.setParameter(SpeechConstant.VOLUME, "80");          //设置音量，范围 0~100
+        mTts.setParameter(SpeechConstant.VOLUME, fayin.toString());          //设置音量，范围 0~100
         mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD); //设置云端
 
         xitongMo=getScreenMode();//获得应用启动时的系统亮度模式,退出时复原
-
-        preferences=getSharedPreferences("fpeizhi", MODE_PRIVATE);//保存配制到本地
-        liangduzhi=preferences.getInt("liangduzhi",150);
-        liangduMo=preferences.getInt("liangduMo",1);
-        fayin=preferences.getInt("fayin",80);
-        editor=preferences.edit();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {  //系统版本,容错
             setTranslucentStatus(true);  //处理状态栏
@@ -102,7 +113,9 @@ public class MainActivity extends ActionBarActivity
     //  dbHelper.deleteDatabase(this); //删除数据库,
 
    //     System.out.println("===onCreate===");
+
     }
+
     @TargetApi(19)
     private void setTranslucentStatus(boolean on) {//处理状态栏透明
         Window win = getWindow();
@@ -131,30 +144,32 @@ public class MainActivity extends ActionBarActivity
     };
 
     protected void onStart(){
-        super.onStart();
-    //    System.out.println("===onStart===");
+        super.onStart();  //从后台出现时调用，可处理一些其他页面的参数
+
+        System.out.println("===onStart===");
     }
 
-    protected void onRestart(){
+    protected void onRestart(){//从后台出现时调用，先这个再onStart（）
         super.onRestart();
-    //    System.out.println("===onRestart===");//从后台恢复,从这里开始,然后onStart,再onResume
+        System.out.println("===onRestart===");//从后台恢复,从这里开始,然后onStart,再onResume
     }
 
     protected void onResume()
     {   super.onResume();
-    //    System.out.println("===onResume===");//测试,启动碎片执行到这里,(activity可见界面)
+        System.out.println("===onResume===");//测试,启动碎片执行到这里,(activity可见界面)
     }
 
     protected void onPause(){
         super.onPause();
-    //    System.out.println("===onPause===");
+        System.out.println("===onPause===");
      }
     protected void onStop(){
         super.onStop();
-
         editor.putInt("liangduzhi",liangduzhi);
         editor.putInt("liangduMo",liangduMo);
-        editor.putInt("fatin",fayin);
+        editor.putInt("fayin",fayin);
+        editor.putBoolean("zhuce",zhuce);
+        editor.putString("user_name",userName);
         editor.commit();
     //    System.out.println("===onStop===");//执行到这里进入后台,不可见
     }
@@ -301,6 +316,7 @@ public class MainActivity extends ActionBarActivity
         int id = item.getItemId();
 
         if (id == R.id.action_example) {//设置
+       //     baidufanyi();
            Intent intent=new Intent(MainActivity.this,setActivity.class);
        //    startActivityForResult(intent,0);//会崩溃
             startActivity(intent);
