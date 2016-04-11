@@ -1,9 +1,11 @@
-package com.example.kimasi.recite;
+package com.example.kimasi.recite.ui;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,7 +15,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,15 +23,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.kimasi.recite.R;
+import com.example.kimasi.recite.ReciteInfo;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment  {
+public class NavigationDrawerFragment extends Fragment {
 
     /**
      * Remember the position of the selected item.
@@ -46,7 +51,7 @@ public class NavigationDrawerFragment extends Fragment  {
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
-    private NavigationDrawerCallbacks mCallbacks;
+    private NavigationDrawerCallbacks mCallbacks;  //这个类的内部接口,留给外部通信
 
     /**
      * Helper component that ties the action bar to the navigation drawer.
@@ -63,10 +68,8 @@ public class NavigationDrawerFragment extends Fragment  {
     private boolean mFromSavedInstanceState;//
     private boolean mUserLearnedDrawer;
 
-    SharedPreferences preferences;
-    SharedPreferences.Editor editor;
-    static String userName_N=" hhh";
-
+    ImageView headview;
+    Bitmap head;
 
     public NavigationDrawerFragment() {
     }
@@ -76,7 +79,7 @@ public class NavigationDrawerFragment extends Fragment  {
         super.onCreate(savedInstanceState);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);//应该是监听,抽屉是否打开
+        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);//监听抽屉之前是否打开
 
         if (savedInstanceState != null) {//获取之前退出时保存的数据
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);//选中的项
@@ -98,26 +101,25 @@ public class NavigationDrawerFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,//绘制界面时调用,返回listView
                              Bundle savedInstanceState) {
 
-        View view=inflater.inflate(R.layout.fragment_navigation_drawer,container,false);
 
-        userNameView=(TextView)view.findViewById(R.id.user_Name);
-        preferences=getActivity().getSharedPreferences("fpeizhi", getActivity().MODE_PRIVATE);//保存配制到本地
-        userName_N=preferences.getString("user_name","kao");//可以读取其他类保存的设置
-   //     userName_N=MainActivity.userName;
-        userNameView.setText(userName_N);
-    //    editor.putString("userName",userName_N);//试试看存在其他地方能不能获取
-        Log.v("碎片creaView","============================");
-        View fnd=view.findViewById(R.id.fnd_1);
-        View touxiang=view.findViewById(R.id.touxiang);
+        head = BitmapFactory.decodeFile(ReciteInfo.headPictureFile);   //头像
+        View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+
+        headview = (ImageView) view.findViewById(R.id.head_View);
+        headview.setImageBitmap(head);
+        userNameView = (TextView) view.findViewById(R.id.user_Name);
+        userNameView.setText(ReciteInfo.userName);
+        View fnd = view.findViewById(R.id.fnd_1);
+        View touxiang = view.findViewById(R.id.touxiang);
         touxiang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //进用户界面或注册
                 Intent intent;
-                if(!MainActivity.zhuce){
-                    intent=new Intent(getActivity(),LoginActivity.class);//登陆
-                }else {
-                     intent=new Intent(getActivity(),UserActivity.class);//资料
+                if (!ReciteInfo.register) {
+                    intent = new Intent(getActivity(), LoginActivity.class);//登陆
+                } else {
+                    intent = new Intent(getActivity(), UserActivity.class);//资料
                 }
                 startActivity(intent);
             }
@@ -128,14 +130,14 @@ public class NavigationDrawerFragment extends Fragment  {
 
             }
         });
-        mDrawerListView=(ListView)view.findViewById(R.id.na_dra_list);
+        mDrawerListView = (ListView) view.findViewById(R.id.na_dra_list);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);//根据点击启动碎片
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>( //设置列表的简单适配器
+        mDrawerListView.setAdapter(new ArrayAdapter<>( //设置列表的简单适配器
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
@@ -143,13 +145,15 @@ public class NavigationDrawerFragment extends Fragment  {
                         getString(R.string.title_section1),
                         getString(R.string.title_section2),
                         getString(R.string.title_section3),
+                        getString(R.string.title_section4),
+
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);//设置列表项只能选择一个
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {  //系统版本,容错
             view.setPadding(0, 150, 0, 0);  //安卓4.4以上,不然会被覆盖,(透明状态栏)
         }
-        return  view;
+        return view;
     }
 
 
@@ -199,7 +203,7 @@ public class NavigationDrawerFragment extends Fragment  {
                 super.onDrawerOpened(drawerView);
                 if (!isAdded()) {
                     return;
-                }//应该是碎片没有显示在他的activity的时候
+                }//碎片没有显示在他的activity的时候
 
                 if (!mUserLearnedDrawer) {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
@@ -209,7 +213,6 @@ public class NavigationDrawerFragment extends Fragment  {
                             .getDefaultSharedPreferences(getActivity());
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
-
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu() 抽屉打开时改变标题栏上的文字(更新)
             }
         };
@@ -219,7 +222,6 @@ public class NavigationDrawerFragment extends Fragment  {
         if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
             mDrawerLayout.openDrawer(mFragmentContainerView);//打开抽屉
         }
-
         // Defer code dependent on restoration of previous instance state.
         mDrawerLayout.post(new Runnable() {  //应该是启动一个ui线程
             @Override
@@ -245,7 +247,7 @@ public class NavigationDrawerFragment extends Fragment  {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Activity activity) {//附上Activity的时候调用,初始化接口
         super.onAttach(activity);
         try {
             mCallbacks = (NavigationDrawerCallbacks) activity;
@@ -291,7 +293,7 @@ public class NavigationDrawerFragment extends Fragment  {
         }
 
         if (item.getItemId() == R.id.action_example) {  //菜单栏,设置,外显
-  //          Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
+            //          Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
             return true;
         }
 

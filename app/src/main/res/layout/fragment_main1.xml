@@ -13,7 +13,7 @@
         android:paddingTop="6dp"
         android:paddingLeft="6dp"
         android:id="@+id/linearLayout">
-        <com.example.kimasi.recite.SwipeLayout
+        <com.example.kimasi.recite.ui.SwipeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -47,12 +47,12 @@
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="单词完成"
+                    android:text="@string/button_accomplish"
                     android:id="@+id/button1" />
 
             </LinearLayout>
-        </com.example.kimasi.recite.SwipeLayout>
-        <com.example.kimasi.recite.SwipeLayout
+        </com.example.kimasi.recite.ui.SwipeLayout>
+        <com.example.kimasi.recite.ui.SwipeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -86,12 +86,12 @@
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="单词完成"
+                    android:text="@string/button_accomplish"
                     android:id="@+id/button2" />
 
             </LinearLayout>
-        </com.example.kimasi.recite.SwipeLayout>
-        <com.example.kimasi.recite.SwipeLayout
+        </com.example.kimasi.recite.ui.SwipeLayout>
+        <com.example.kimasi.recite.ui.SwipeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -126,12 +126,12 @@
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="单词完成"
+                    android:text="@string/button_accomplish"
                     android:id="@+id/button3" />
 
             </LinearLayout>
-        </com.example.kimasi.recite.SwipeLayout>
-        <com.example.kimasi.recite.SwipeLayout
+        </com.example.kimasi.recite.ui.SwipeLayout>
+        <com.example.kimasi.recite.ui.SwipeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -165,12 +165,12 @@
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="单词完成"
+                    android:text="@string/button_accomplish"
                     android:id="@+id/button4" />
 
             </LinearLayout>
-        </com.example.kimasi.recite.SwipeLayout>
-        <com.example.kimasi.recite.SwipeLayout
+        </com.example.kimasi.recite.ui.SwipeLayout>
+        <com.example.kimasi.recite.ui.SwipeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -204,12 +204,12 @@
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="单词完成"
+                    android:text="@string/button_accomplish"
                     android:id="@+id/button5" />
 
             </LinearLayout>
-        </com.example.kimasi.recite.SwipeLayout>
-        <com.example.kimasi.recite.SwipeLayout
+        </com.example.kimasi.recite.ui.SwipeLayout>
+        <com.example.kimasi.recite.ui.SwipeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -243,11 +243,11 @@
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="单词完成"
+                    android:text="@string/button_accomplish"
                     android:id="@+id/button6" />
 
             </LinearLayout>
-        </com.example.kimasi.recite.SwipeLayout>
+        </com.example.kimasi.recite.ui.SwipeLayout>
 
     </LinearLayout>
 

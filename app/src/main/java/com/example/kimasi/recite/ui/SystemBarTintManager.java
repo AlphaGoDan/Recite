@@ -1,6 +1,7 @@
-package com.example.kimasi.recite;
+package com.example.kimasi.recite.ui;
 
 /**
+ * 支持4.4以上,状态栏沉浸
  * Created by kimasi on 2016/2/13.
  */
 
@@ -22,6 +23,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout.LayoutParams;
+
+import com.example.kimasi.recite.R;
 
 import java.lang.reflect.Method;
 

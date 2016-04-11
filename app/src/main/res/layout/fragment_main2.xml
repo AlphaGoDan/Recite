@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="0dp"
-    tools:context=".MainActivity$PlaceholderFragment">
+    tools:context=".MainActivity">
 
 
     <RelativeLayout
@@ -40,8 +40,8 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="时间排序"
-                android:id="@+id/button"
+                android:text="@string/button_rank"
+                android:id="@+id/paixu"
                 android:layout_marginLeft="10dp" />
 
         </LinearLayout>

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="statusbar_bg">#ff1d5f77</color>
+    <color name="statusbar_bg2">#f1789f9a</color>
     <color name="bar2">#000000</color>
     <color name="bar3">#444444</color>
+    <color name="bubble1">#b3f24e4e</color>
     <color name="transparent">#9000</color>
+    <color name="en_paincolor">#ff00cd9d</color>
+    <color name="cn_paincolor">#fffff2d3</color>
 </resources>

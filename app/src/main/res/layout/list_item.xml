@@ -3,12 +3,6 @@
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkBox"
-        android:checked="false" />
-
     <TextView
         android:layout_width="120dp"
         android:layout_height="wrap_content"

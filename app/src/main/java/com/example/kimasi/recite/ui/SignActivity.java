@@ -1,4 +1,4 @@
-package com.example.kimasi.recite;
+package com.example.kimasi.recite.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,6 +7,7 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -28,13 +29,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.kimasi.recite.R;
+import com.example.kimasi.recite.ReciteInfo;
+import com.example.kimasi.recite.module.MyUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.SaveListener;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -42,59 +47,51 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-  //注册
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;//身份一致
+public class SignActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */       //一个虚拟身份验证存储包含用户名和密码。
+    private static final int REQUEST_READ_CONTACTS = 0; //身份一致
+
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */    //用来处理密码联网验证
+  //用来处理密码联网验证
     private UserLoginTask mAuthTask = null; //记录登陆，实现异步操作,并提供接口反馈当前异步执行的程度
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mEmailView; //应该是自动补全
+    private EditText mUserView;
     private EditText mPasswordView;
+    private EditText mPasswordView2;//注册密码验证两次
     private View mProgressView;
     private View mLoginFormView;
-    Button zhuCe;
-    String email ;
-    View focusView = null;
 
+    static SharedPreferences preferences;
+    static SharedPreferences.Editor editor;
 
-
+    String name;
+    String email;
+    String password ;
+    String password2 ;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {  //登陆
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        setContentView(R.layout.activity_sign);
 
-        zhuCe=(Button)findViewById(R.id.zhu_ce);
-        zhuCe.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(LoginActivity.this,SignActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+        preferences=getSharedPreferences("fpeizhi", MODE_PRIVATE);//保存配制到本地
+        editor=preferences.edit();
+        Bmob.initialize(this, "8c90ef0312bfa9752d4d8ca72ef9ae03");
+
+        // 设置登录表单。
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);//邮箱
+        populateAutoComplete();
+        mUserView = (EditText) findViewById(R.id.userName);
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordView2 = (EditText) findViewById(R.id.password2);
+        mPasswordView2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin(); //尝试登陆
+                if (id == R.id.login || id == EditorInfo.IME_NULL) { //应该是可以用来监听键盘的确认键的
+                    attemptLogin();//点击注册，进行验证和注册
                     return true;
                 }
                 return false;
@@ -110,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mProgressView = findViewById(R.id.login_progress);//圆圈进度条
     }
 
     private void populateAutoComplete() {
@@ -122,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {//sdk版本
             return true;
         }
         if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
@@ -157,26 +154,45 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
+    /**
+     * Attempts to sign in or register the account specified by the login form.
+     * If there are form errors (invalid email, missing fields, etc.), the
+     * errors are presented and no actual login attempt is made.
+     */
     private void attemptLogin() {
-        if (mAuthTask != null) {//应该是确认已经登陆过
+        if (mAuthTask != null) {//应该是确认正在登陆（不能点击进行第二次）
             return;
         }
 
-        // Reset errors.
+        // 重置错误
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
-        // Store values at the time of the login attempt.
-        email = mEmailView.getText().toString();//获取
-        String password = mPasswordView.getText().toString();
+        // 获取存储值进行登录尝试。
+         name=mUserView.getText().toString();
+         email = mEmailView.getText().toString();
+         password = mPasswordView.getText().toString();
+         password2 = mPasswordView2.getText().toString();
+
 
         boolean cancel = false;
+        View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) { //检查密码不等于空和长度大于4
+        if(TextUtils.isEmpty(name)){
+            mUserView.setError("请输入用户名");
+            focusView = mUserView;
+            cancel = true;//取消登陆
+        }
+
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {//检查密码不等于空和长度大于4
             mPasswordView.setError(getString(R.string.error_invalid_password));//错误提示
             focusView = mPasswordView;
-            cancel = true; //取消登陆
+            cancel = true;//取消登陆
+        }
+        if(!password.equals(password2)){
+            mPasswordView.setError(getString(R.string.error_invalid_password2)); //错误提示
+            focusView = mPasswordView;
+            cancel = true;//取消登陆
         }
 
         // Check for a valid email address.
@@ -184,41 +200,55 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        }/* else if (!isEmailValid(email)) { //检查是不是邮箱格式
+        } else if (!isEmailValid(email)) {//检查是不是邮箱格式
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
-            cancel = true;}*/
+            cancel = true;
+        }
 
-        if (cancel) {//取消登陆
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();//应该是焦点转移到后面的视图
+        if (cancel) {
+
+            focusView.requestFocus();//应该是焦点转移到focusView视图(即，输错的栏）
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-      //      showProgress(true); //应该是登陆的进度条，后面会进行密码匹配，如下Task
-      //      mAuthTask = new UserLoginTask(email, password);
-      //      mAuthTask.execute((Void) null);
+     //       showProgress(true);//应该是登陆的进度条，后面会进行密码匹配，如下Task
+     //       mAuthTask = new UserLoginTask(name,email, password);//另一异步线程进行密码匹配，这是初始化
+      //      mAuthTask.execute((Void) null); //这是开始执行
 
-            BmobUser bu2 = new BmobUser();
-            bu2.setUsername(email);
-            bu2.setPassword(password);
-            bu2.login(this, new SaveListener() {
+            BmobUser bu = new BmobUser();
+            bu.setUsername(name);//进行注册
+            bu.setPassword(password);
+            bu.setEmail(email);
+            //注意：不能用save方法进行注册
+            bu.signUp(this, new SaveListener() {
                 @Override
                 public void onSuccess() {
-                    MainActivity.zhuce=true; //确认已经登陆//放在登陆监听内
-                    MainActivity.userName=email;
-                    NavigationDrawerFragment.userNameView.setText(email);//显示用户信息
+                    // TODO Auto-generated method stub
+                    Toast.makeText(getApplicationContext(), "注册成功",
+                            Toast.LENGTH_SHORT).show();
+                    Log.v("注册成功","====");
+
+                    ReciteInfo.register=true;
+                    ReciteInfo.userName=name;
+                    editor.putString("user_name",name);
+                    editor.commit();
+                    Intent intent=new Intent(SignActivity.this,UserActivity.class);
+                    intent.putExtra("name",name);
+                    startActivity(intent);
+                    NavigationDrawerFragment.userNameView.setText(name);
                     finish();
                 }
                 @Override
                 public void onFailure(int code, String msg) {
-                    Log.v("错误",msg);
-                    mPasswordView.setError("请检查密码或账号");//错误提示
-                    focusView = mPasswordView;
-                    focusView.requestFocus();//返回
+                    // TODO Auto-generated method stub
+                    Toast.makeText(getApplicationContext(), "注册失败 "+msg,
+                            Toast.LENGTH_SHORT).show();
+                    Log.v("注册失败","====");
+                    mEmailView.setError(getString(R.string.error_incorrect_email));//注册用户已存在
+                    mEmailView.requestFocus();//重新获得输入密码焦点
+
                 }
             });
+
         }
     }
 
@@ -232,7 +262,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return password.length() > 4;
     }
 
-    /**
+    /**  显示了进步UI和隐藏登录表单。
      * Shows the progress UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
@@ -240,11 +270,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {//确认版本，看能不能用动画
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);//隐藏整个登陆输入框
+            mLoginFormView.animate().setDuration(shortAnimTime).alpha(  //动画
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -252,7 +282,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);//显示进度条
             mProgressView.animate().setDuration(shortAnimTime).alpha(
                     show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override
@@ -305,7 +335,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(SignActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -327,48 +357,53 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {//实现异步操作,并提供接口反馈当前异步执行的程度
 
+        private final String mName;
         private final String mEmail;
         private final String mPassword;
+        private boolean sign;
 
-        UserLoginTask(String email, String password) {
+        UserLoginTask(String name,String email, String password) {
+            mName = name;
             mEmail = email;
             mPassword = password;
+            sign=false;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+            Bmob.initialize(SignActivity.this, "8c90ef0312bfa9752d4d8ca72ef9ae03");
 
+            MyUser bu=new MyUser();
 
-            BmobUser.loginByAccount(LoginActivity.this, mEmail,mPassword, new LogInListener<MyUser>() {
-
+            bu.setUsername(mName);//进行注册
+            bu.setPassword(mPassword);
+            bu.setEmail(mEmail);
+            //注意：不能用save方法进行注册
+            bu.signUp(SignActivity.this, new SaveListener() {
                 @Override
-                public void done(MyUser user, BmobException e) {
+                public void onSuccess() {
                     // TODO Auto-generated method stub
-                    if(user!=null){
-                        Log.i("smile","用户登陆成功");
-            //            NavigationDrawerFragment.userName_N=mEmail;
-                    }
+                    sign=true;
+                    Toast.makeText(getApplicationContext(), "注册成功",
+                            Toast.LENGTH_SHORT).show();
+             //       signCallbacks=new NavigationDrawerFragment();
+             //       signCallbacks.onSignRefresh(mName);
+            }
+                @Override
+                public void onFailure(int code, String msg) {
+                    // TODO Auto-generated method stub
+                    sign=true;
+                    Toast.makeText(getApplicationContext(), "注册失败 "+msg,
+                            Toast.LENGTH_SHORT).show();
                 }
             });
             try {   //这里应该是访问网络，验证密码
                 // Simulate network access.
-                Thread.sleep(500);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 return false;  //false验证不了
             }
-/*
-            for (String credential : DUMMY_CREDENTIALS) {//原版用来验证密码的
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-*/
-       //     NavigationDrawerFragment.userNameView.setText(mEmail);
-
-            // TODO: register the new account here.
             return true;
         }
 
@@ -379,18 +414,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
 
+                ReciteInfo.register=true;
+                ReciteInfo.userName=mName;
+                editor.putString("user_name",mName);
+                editor.commit();
+                Intent intent=new Intent(SignActivity.this,UserActivity.class);
+                intent.putExtra("name",mName);
+                startActivity(intent);
+                NavigationDrawerFragment.userNameView.setText(mName);
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));//密码错误
-                mPasswordView.requestFocus();//重新获得输入密码焦点
+                mEmailView.setError(getString(R.string.error_incorrect_email));//注册用户已存在
+                mEmailView.requestFocus();//重新获得输入密码焦点
             }
         }
 
         @Override
         protected void onCancelled() {//取消
-            mAuthTask = null; //后台异步栈置空
+            mAuthTask = null;//后台异步栈置空
             showProgress(false);
         }
     }
+
 }
 

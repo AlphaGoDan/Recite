@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="0dp"
-    tools:context=".MainActivity$PlaceholderFragment"
-    android:background="#cc82b5cc">
+    tools:context=".MainActivity"
+    android:background="#d35aa3cd">
 
     <LinearLayout
         android:orientation="vertical"
@@ -17,7 +17,7 @@
             android:layout_width="fill_parent"
             android:layout_height="290dp"
             android:layout_marginBottom="0dp"
-            android:background="#ff4995a5">
+            android:background="#a79bc3db">
 
             <RelativeLayout
                 android:orientation="horizontal"
@@ -32,22 +32,22 @@
 
                     android:src="@drawable/qqq"
                     android:layout_centerHorizontal="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imageView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:id="@+id/head_View"
                     android:background="@drawable/sinaweibo_avatar"
-                    android:layout_marginTop="15dp" />
+                    android:layout_marginTop="25dp" />
 
                 <TextView
                     android:layout_centerHorizontal="true"
 
-                    android:layout_below="@+id/imageView"
+                    android:layout_below="@+id/head_View"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="点击登陆"
+                    android:text="@string/button_login"
                     android:id="@+id/user_Name"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="25dp"
                     android:layout_marginLeft="40dp"
                     android:layout_marginBottom="10dp" />
 
@@ -55,37 +55,16 @@
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="15dp">
 
                 <LinearLayout
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="开始时间:"
-                        android:id="@+id/textView7" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="   2016-02-01"
-                        android:id="@+id/textView8" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp" >
+                    android:layout_marginTop="10dp" >
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -98,7 +77,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="   考试通过: 150 个"
+                        android:text="考试通过: 150 个"
                         android:id="@+id/textView12" />
                 </LinearLayout>
 
@@ -109,18 +88,20 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="200dp">
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom">
 
             <ListView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/na_dra_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="fill_parent"
+                android:layout_height="245dp"
                 android:choiceMode="singleChoice"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="0dp"
-                android:background="#cc82b5cc"
-                tools:context=".NavigationDrawerFragment" />
+                android:background="#d35aa3cd"
+                tools:context=".ui.NavigationDrawerFragment"
+                android:contextClickable="true" />
         </LinearLayout>
 
     </LinearLayout>

@@ -9,8 +9,9 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.kimasi.recite.UserActivity"
-    tools:showIn="@layout/activity_user">
+    tools:context=".ui.UserActivity"
+    tools:showIn="@layout/activity_user"
+    android:background="#bcd2cf">
 
     <LinearLayout
         android:orientation="vertical"
@@ -28,9 +29,12 @@
 
             <ImageView
                 android:background="@drawable/sinaweibo_avatar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageView2" />
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/touxiang111"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:focusableInTouchMode="true" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -42,16 +46,17 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Medium Text"
-                    android:id="@+id/textView6"
+                    android:id="@+id/ttt1"
                     android:layout_marginRight="0dp"
-                    android:layout_marginLeft="20dp" />
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
-                    android:id="@+id/textView19"
+                    android:text="..."
+                    android:id="@+id/ttt2"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="20dp" />
             </LinearLayout>
@@ -61,13 +66,13 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="开始时间"
                 android:id="@+id/textView13" />
 
             <TextView
@@ -75,44 +80,47 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/textView14"
-                android:text="计划完成" />
+                android:text="完成情况：" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="已完成"
                 android:id="@+id/textView15" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="选择单词包"
                 android:id="@+id/textView16"
-                android:layout_marginTop="15dp" />
+                android:layout_marginTop="15dp"
+                android:text="单词数 1070个" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="任务1"
-                android:id="@+id/textView4" />
+                android:id="@+id/textView4"
+                android:text="通过考试：      个"
+                android:layout_marginTop="10dp"
+                android:textColor="#af5d2828" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="选择单词包"
                 android:id="@+id/textView18"
-                android:layout_marginTop="0dp" />
+                android:layout_marginTop="0dp"
+                android:text="平均一天完成          个"
+                android:textColor="#af5d2828" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="任务2"
-                android:id="@+id/textView17" />
+                android:id="@+id/textView17"
+                android:text="已掌握              个"
+                android:textColor="#af5d2828" />
 
         </LinearLayout>
 

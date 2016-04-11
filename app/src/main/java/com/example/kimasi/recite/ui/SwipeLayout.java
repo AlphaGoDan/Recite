@@ -1,4 +1,4 @@
-package com.example.kimasi.recite;
+package com.example.kimasi.recite.ui;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 /**
+ * 抽屉小组件
  * Created by Bruce on 11/24/14.
  */
 public class SwipeLayout extends LinearLayout {
@@ -92,7 +93,7 @@ public class SwipeLayout extends LinearLayout {
         public void onViewReleased(View releasedChild, float xvel, float yvel) {//没有拖动一定距离时复位
             super.onViewReleased(releasedChild, xvel, yvel);
             boolean settleToOpen = false;
-            if (xvel > AUTO_OPEN_SPEED_LIMIT) {  //应该是x没有移动到这个值时复位
+            if (xvel > AUTO_OPEN_SPEED_LIMIT) {  //x没有移动到这个值时复位
                 settleToOpen = false;
             } else if (xvel < -AUTO_OPEN_SPEED_LIMIT) {
                 settleToOpen = true;

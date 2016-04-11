@@ -1,4 +1,4 @@
-package com.example.kimasi.recite;
+package com.example.kimasi.recite.module;
 
 import org.json.JSONObject;
 
